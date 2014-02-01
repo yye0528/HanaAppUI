@@ -7,7 +7,7 @@
 <div class="row">
   <div class="col-md-6 col-md-offset-3" ng-controller="DemoCtrl">
     <span>{{title}}</span>
-    <d3-bars data="d3Data" label="name" on-click="d3OnClick(item)"></d3-bars>
+    <d3-bars data="d3Data" label="name" on-click="d3OnClick(item)" bar-height="50" bar-margin="5" max-width="50"></d3-bars>
     <br>
     <br>
     <span>First Item</span>
@@ -26,7 +26,7 @@
 <div class="row">
   <div class="col-md-6 col-md-offset-3" ng-controller="DemoCtrl2">
     <span>{{title}}</span>
-    <d3-bars data="d3Data" label="title"></d3-bars>
+    <d3-bars data="d3Data" label="title" bar-height="30" bar-margin="5" max-width="200"></d3-bars >
     <br>
     <br>
     <span>First Item</span>
