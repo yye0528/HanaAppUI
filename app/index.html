@@ -13,6 +13,8 @@
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="bower_components/nvd3/nv.d3.css" />
+    <link rel="stylesheet" href="bower_components/angular-dropdowns/css/dropdowns.css" />
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css({.tmp,app}) styles/main.css -->
@@ -25,7 +27,7 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div class="container" ng-view=""></div>
+    <p><div class="container" ng-view=""></div></p>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
      <script>
@@ -52,15 +54,20 @@
     <script src="bower_components/angular-cookies/angular-cookies.js"></script>
     <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
-    <script src="bower_components/angular-bootstrap/angular-route.js"></script>
+    <script src="bower_components/underscore/underscore.js"></script>
+    <script src="bower_components/angular-underscore-module/angular-underscore-module.js"></script>
+    <script src="bower_components/d3/d3.js"></script>
+    <script src="bower_components/nvd3/nv.d3.js"></script>
+    <script src="bower_components/moment/moment.js"></script>
+    <script src="bower_components/angularjs-nvd3-directives/dist/angularjs-nvd3-directives.js"></script>
+    <script src="bower_components/angular-dropdowns/dist/angular-dropdowns.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
-        <script src="scripts/app.js"></script>
+        <script src="scripts/services/datamanager.js"></script>
         <script src="scripts/controllers/main.js"></script>
-        <script src="scripts/d3service.js"></script>
-        <script src="scripts/directives/d3-bar.js"></script>
+        <script src="scripts/app.js"></script>
         <!-- endbuild -->
 </body>
 </html>

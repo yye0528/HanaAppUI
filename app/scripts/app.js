@@ -5,8 +5,11 @@ angular.module('webApp', [
   'ngResource',
   'ngSanitize',
   'ngRoute',
-  'directives',
-  'd3'
+  'underscore',
+  'dataManager',
+  'controllers',
+  'nvd3ChartDirectives',
+  'ngDropdowns'
 ])
   .config(function ($routeProvider) {
     $routeProvider

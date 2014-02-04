@@ -10,7 +10,11 @@
     "angular-resource": "1.2.6",
     "angular-cookies": "1.2.6",
     "angular-sanitize": "1.2.6",
-    "angular-route": "1.2.6"
+    "angular-route": "1.2.6",
+    "underscore": "1.5.2",
+    "angular-underscore-module": "*",
+    "angularjs-nvd3-directives": "~0.0.5-beta",
+    "angular-dropdowns": "*"
   },
   "devDependencies": {
     "angular-mocks": "1.2.6",
