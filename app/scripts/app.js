@@ -8,13 +8,18 @@ angular.module('webApp', [
   'underscore',
   'dataManager',
   'controllers',
+  'visDirectives',
   'nvd3ChartDirectives',
-  'ngDropdowns'
+  'ngDropdowns',
+  'ui.bootstrap'
 ])
   .config(function ($routeProvider) {
     $routeProvider
-      .when('/', {
-        templateUrl: 'views/main.html',
+      .when('/vis', {
+        templateUrl: '/views/vis-scatter-template.html'
+      })
+      .when("/", {
+        templateUrl: '/views/vis-select-tabs.html'
       })
       .otherwise({
         redirectTo: '/'

@@ -4,6 +4,8 @@ body {
   padding-bottom: 20px;
 }
 
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
 /* Everything but the jumbotron gets side spacing for mobile first views */
 .header,
 .marketing,
@@ -33,6 +35,16 @@ body {
 
 .container {
   width: 1200px;
+}
+
+.tab-content{
+  margin-top:20px;
+}
+
+.tab-icon{
+  width:20px;
+  height:20px;
+  margin-right: 10px;
 }
 
 #axispicker label{
