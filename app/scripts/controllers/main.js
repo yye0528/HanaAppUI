@@ -33,8 +33,8 @@ angular.module('controllers',['dataManager','underscore','ngDropdowns'])
 
 			//set up the attr selector
 			$scope.attrOptions=[];
-			$scope.attrForX={attrName: "X axis",value:false};
-			$scope.attrForY={attrName: "Y axis",value:false};
+			$scope.attrForX={attrName: "Please select",value:false};
+			$scope.attrForY={attrName: "Please select",value:false};
 
 			_.each($scope.columns,function(element){
 				$scope.attrOptions.push({

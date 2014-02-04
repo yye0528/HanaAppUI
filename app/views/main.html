@@ -1,28 +1,26 @@
-<div ng-controller='DemoCtrl'>
-    <span>
+<div id="visualization" ng-controller='DemoCtrl'>
+		<div id="axispicker">    
+	    <label class="pull-left control-label">X axis:</label>
 	    <div 	dropdown-select="attrOptions" 
 	    			dropdown-model="attrForX" 
 	    			dropdown-item-label="attrName"
-	    			dropdown-onchange="axisChange('x')">
+	    			dropdown-onchange="axisChange('x')"
+	    			class="pull-left ">
 	    </div>
-    <span>
-    <span>
+	    <label class="pull-left control-label">Y axis:</label>
 	    <div 	dropdown-select="attrOptions" 
 	    			dropdown-model="attrForY" 
 	    			dropdown-item-label="attrName"
-	    			dropdown-onchange="axisChange('y')">
+	    			dropdown-onchange="axisChange('y')"
+	    			class="pull-left ">
 	    </div>
-    <span>
-    <p>{{attrForX.value}}</p>
-    <br>
-    <p>{{attrForY.value}}</p>
-
+    </div>
     <nvd3-scatter-chart
             data="data"
             id="exampleId"
-            width="1200"
+            width="800"
             height="400"
-            margin="{left:150,top:100,bottom:100,right:150}"
+            margin="{left:100,top:100,bottom:100,right:100}"
             tooltips="true"
             interactive="true"
             shape="getShapeCircle()"
