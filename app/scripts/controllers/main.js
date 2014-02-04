@@ -46,7 +46,6 @@ angular.module('controllers',['dataManager','underscore','ngDropdowns'])
 			//update chart data when user change the selection
 			$scope.axisChange=function(axisName){
 				if($scope.attrForX.value && $scope.attrForY.value){
-					$log.log('load data');
 					$scope.data =	dataTransformer.LRTonvd3Scatter(rawData,$scope.attrForX.value,$scope.attrForY.value,'');
 				}
 			}
