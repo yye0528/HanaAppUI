@@ -58,6 +58,12 @@ body {
   margin-right: 20px;
 }
 
+.gridStyle {
+    border: 1px solid rgb(212,212,212);
+    width: 1000px; 
+    height: 400px;
+}
+
 /* Customize container */
 @media (min-width: 768px) {
 

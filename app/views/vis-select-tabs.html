@@ -1,19 +1,12 @@
-<div id="tab-container" ng-controller="TabsCtrl">
+<div id="tab-container" ng-controller="tabsCtrl">
   <h1>Visualization</h1>
 
   <tabset>
-    <tab>
+    <tab ng-repeat="tab in tabs" active="tab.active">
     	<tab-heading>
-    		<img class="tab-icon" src="/images/icons/grid-26.png">Table View
+    		<img class="tab-icon" ng-src="{{tab.imgUrl}}">{{tab.title}}
     	</tab-heading>
-    	A table to be inserted here
+    	<div ng-if="tab.active" ng-include="tab.contentUrl"></div>
     </tab>
-    <tab>
-    	<tab-heading>
-    		<img class="tab-icon" src="/images/icons/scatter_plot-25.png">Scatter Plot
-    	</tab-heading>
-			<div vis-scatter></div>
-    </tab>
-
   </tabset>
 </div>

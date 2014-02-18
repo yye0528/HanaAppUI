@@ -2,10 +2,7 @@
 
 angular.module('dataManager',['underscore'])
 	.factory('dataLoader', ['$resource',function($resource){
-		return $resource(
-			// 'https:',
-			// {}
-		);
+		return $resource('scripts/:data.json');
 	}])
 	.factory('dataStore', ['_','$log',function(_,$log){
 		// example of a data object in container:
@@ -13,6 +10,7 @@ angular.module('dataManager',['underscore'])
 		// 	name:'example'
 		// 	data:{}
 		// }
+		var currentItem={};
 		var container=[];
 		var generateTS=function(){
 			return new Date().getTime();
@@ -35,20 +33,26 @@ angular.module('dataManager',['underscore'])
 				return container;
 			},
 
-			getDataByTS:function(TS){
-				return container[TS];
-			},
-
 			getDataByName:function(name){
 				//requirement: data in the container must be in standard form
 				return _.where(container,{'name':name})[0]; 
+			},
+
+			getCurrentItem:function(){
+				return currentItem;
+			},
+
+			setCurrentItem:function(item){
+				currentItem=item;
 			}
+
 		};
 	}])	
 	.factory('dataTransformer', ['_','$log',function(_,$log){
 		return {
 			LRTonvd3Scatter:function(rawData,xColName,yColName,sizeColName){
 				//push the input data
+				//the random thing is a work-around to the problem that nvd3 don't accept duplicated (x,y) values
 				var inputValues=[];
 				_.each(rawData.input.values,function(element){
 						inputValues.push({
@@ -79,6 +83,32 @@ angular.module('dataManager',['underscore'])
 						values:inputValues
 					}
 				];
+				return finalData;
+			},
+			
+			LRToGrid:function(rawData){
+				var finalData=[];
+				var columns=rawData.input.columns;
+				
+				// push the input part
+				_.each(rawData.input.values,function(rowArray){
+						var rowObj={};
+						_.each(columns,function(attr,attrIndex){
+							rowObj[attr]=rowArray[attrIndex];
+						});
+						rowObj.$group='input';
+						finalData.push(rowObj);
+				});
+
+				// push the predicted part
+				_.each(rawData.predicted.values,function(rowArray){
+						var rowObj={};
+						_.each(columns,function(attr,attrIndex){
+							rowObj[attr]=rowArray[attrIndex];
+						});
+						rowObj.$group='predicted';
+						finalData.push(rowObj);
+				});
 				return finalData;
 			}
 		};
