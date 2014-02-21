@@ -143,7 +143,7 @@ angular.module('dataManager', ['underscore'])
           _.each(rawData.values, function(element) {
             pointValues.push({
               x: xColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(element[columns.indexOf(xColName)]) : element[columns.indexOf(xColName)],
-              y: xColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(element[columns.indexOf(xColName)]) : element[columns.indexOf(xColName)],
+              y: yColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(element[columns.indexOf(yColName)]) : element[columns.indexOf(yColName)],
               shape: getShape(element[columns.indexOf('STOCK_TREND')]),
               size: 100
             });
@@ -157,7 +157,7 @@ angular.module('dataManager', ['underscore'])
           return finalData;
         },
 
-        stockToGrid: function(rawData, group, oldData) {
+        DTToStockGrid: function(rawData, group, oldData) {
           var finalData = _.isArray(oldData) ? oldData : [];
           var columns = rawData.columns;
 

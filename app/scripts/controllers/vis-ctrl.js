@@ -132,7 +132,7 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
       $scope.axisChange = function() {
         if ($scope.attrForX.value && $scope.attrForY.value) {
           // $scope.chart=null;
-          $scope.data = dataTransformer.DTToStockPredition(rawData, $scope.attrForX.value, $scope.attrForY.value, 'predicted');
+          $scope.data = dataTransformer.DTToStockPredition(rawData, $scope.attrForX.value, $scope.attrForY.value, 'input');
         }
       };
 
@@ -144,13 +144,23 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
       };
 
       //configure the chart
-      $scope.axistickformatFunction = function() {
+      $scope.xAxistickformatFunction = function() {
         var dateFormatter = function(d) {
           return d3.time.format('%m/%d/%Y')(new Date(d));
         };
         var numFormatter = d3.format('.1f');
 
         var formatter = $scope.attrForX.value === 'DATE' ? dateFormatter : numFormatter;
+        return formatter;
+      };
+
+      $scope.yAxistickformatFunction = function() {
+        var dateFormatter = function(d) {
+          return d3.time.format('%m/%d/%Y')(new Date(d));
+        };
+        var numFormatter = d3.format('.1f');
+
+        var formatter = $scope.attrForY.value === 'DATE' ? dateFormatter : numFormatter;
         return formatter;
       };
 
@@ -167,7 +177,7 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
       $scope.gridOptions = {
         data: 'gridData',
         enablePinning: true,
-        // showGroupPanel: true,         ---> buggy in 2.0.7, will be fixed in 2.0.8
+        // showGroupPanel: true,         ---> buggy in ng-grid 2.0.7, will be fixed in 2.0.8
         enableColumnResize: true,
         columnDefs: 'columnDefs'
       };
@@ -198,5 +208,48 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
           $log.log('data loading failed. reason: ' + reason);
         }); //rawData callback
 
+    }
+  ])
+  .controller('stockGridCtrl', ['_', '$scope', '$log', 'dataLoader', 'dataStore', 'dataTransformer',
+    function(_, $scope, $log, dataLoader, dataStore, dataTransformer) {
+      $scope.showPlaceholder = true;
+      $scope.showError = false;
+
+      // initiate grid option. Skipping initiation will invoke compiling error!
+      $scope.gridData = [];
+      $scope.columnDefs = [];
+      $scope.gridOptions = {
+        data: 'gridData',
+        enablePinning: true,
+        // showGroupPanel: true,         ---> buggy in ng-grid 2.0.7, will be fixed in 2.0.8
+        enableColumnResize: true,
+        columnDefs: 'columnDefs'
+      };
+
+      var columns = [];
+      dataLoader.get({
+          data: 'PAL.stock_1d'
+        }, function(rawData) {
+          $scope.columns = rawData.columns;
+          _.each($scope.columns, function(element) {
+            var column = {
+              field: element
+            };
+            columns.push(column);
+          });
+          //append the $group to indicate input data or predicted data
+          columns.push({
+            field: '$group',
+            displayName: 'Group'
+          });
+          $scope.columnDefs = columns;
+          $scope.gridData = dataTransformer.DTToStockGrid(rawData, 'input');
+
+          $scope.showPlaceholder = false;
+        },
+        function(reason) {
+          $scope.showError = true;
+          $log.log('data loading failed. reason: ' + reason);
+        }); //rawData callback
     }
   ]);
