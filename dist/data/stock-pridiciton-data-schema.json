@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "stockPricePrediciton",
+  "description": "The schema for stock price predicion data",
+  "type": "object",
+  "property": {
+    "meta-attrs": {
+      "description": "An array of all the attributes of tabular data",
+      "type": "array",
+      "items": {
+        "description": "Infomation of the attribute",
+        "type": "object",
+        "property": {
+          "name": {
+            "description": "Name of the attributes",
+            "type": "string"
+          },
+          "displayName": {
+            "description": "The name displayed on axis, table head etc",
+            "type": "string"
+          },
+          "type": {
+            "description": "The data type of the attribute, e.g string, date, number, boolean, etc",
+            "type": "string"
+          },
+          "required": [
+            "name",
+            "type"
+          ]
+        }
+      }
+    },
+    "meta-rowCount": {
+      "description": "The number of rows in the tabular data",
+      "type": "number",
+      "minimum": 0
+    },
+    "tabularData": {
+      "description": "The main data section organized in a two dimentional array",
+      "type": "array",
+      "items": {
+        "description": "Values of all attributes described in the meta-attrs",
+        "type": "array"
+      }
+    }
+  }
+}

@@ -3,7 +3,7 @@
 angular.module('dataManager', ['underscore'])
   .factory('dataLoader', ['$resource',
     function($resource) {
-      return $resource('scripts/:data.json');
+      return $resource('data/:data');
     }
   ])
   .factory('dataStore', ['_', '$log',
@@ -82,23 +82,24 @@ angular.module('dataManager', ['underscore'])
         },
 
         LRTonvd3Scatter: function(rawData, xColName, yColName, sizeColName) {
+          var columns = rawData.input.columns;
           //push the input data
           //the random thing is a work-around to the problem that nvd3 don't accept duplicated (x,y) values
           var inputValues = [];
-          _.each(rawData.input.values, function(element) {
+          _.each(rawData.input.values, function(row) {
             inputValues.push({
-              x: element[rawData.input.columns.indexOf(xColName)] + Math.random() * 0.001,
-              y: element[rawData.input.columns.indexOf(yColName)] + Math.random() * 0.001,
-              size: _.isEmpty(sizeColName) ? 100 : element[rawData.input.columns.indexOf(sizeColName)] + Math.random() * 0.001
+              x: row[columns.indexOf(xColName)] + Math.random() * 0.00000001,
+              y: row[columns.indexOf(yColName)] + Math.random() * 0.00000001,
+              size: _.isEmpty(sizeColName) ? 100 : row[columns.indexOf(sizeColName)] + Math.random() * 0.00000001
             });
           });
           //push the predicted data
           var predictedValues = [];
-          _.each(rawData.predicted.values, function(element) {
+          _.each(rawData.predicted.values, function(row) {
             predictedValues.push({
-              x: element[rawData.predicted.columns.indexOf(xColName)] + Math.random() * 0.001,
-              y: element[rawData.predicted.columns.indexOf(yColName)] + Math.random() * 0.001,
-              size: _.isEmpty(sizeColName) ? 100 : element[rawData.predicted.columns.indexOf(sizeColName)] + Math.random() * 0.001
+              x: row[columns.indexOf(xColName)] + Math.random() * 0.00000001,
+              y: row[columns.indexOf(yColName)] + Math.random() * 0.00000001,
+              size: _.isEmpty(sizeColName) ? 100 : row[columns.indexOf(sizeColName)] + Math.random() * 0.00000001
             });
           });
           //assemble the final data
@@ -114,24 +115,19 @@ angular.module('dataManager', ['underscore'])
           return finalData;
         },
 
-        DTToStockPredition: function(rawData, xColName, yColName, group, oldData) {
-          //push the input data
-          //the random thing is a work-around to the problem that nvd3 don't accept duplicated (x,y) values
-          var finalData = _.isArray(oldData) ? oldData : [];
-          var pointValues = [];
-          var keyName = group;
-          var pointColor = (group === 'input') ? '00D0FF' : '#FF2F00';
+        DTToStockPredition: function(rawData, xColName, yColName) {
+          var columns = rawData.input.columns;
           var getShape = function(trend) {
-            //non-price values and the input stock price are displayed as circles
-            if (yColName !== 'STOCK_CLOSE_PRICE' || group === 'input') {
+            //non-price values are displayed as circles
+            if (yColName !== 'STOCK_CLOSE_PRICE') {
               return 'circle';
             }
 
             //only the predicted stock price are displayed depend on stock trend
             var shape;
-            if (trend === 'up') {
+            if (trend === 'UP') {
               shape = 'triangle-up';
-            } else if (trend === 'down') {
+            } else if (trend === 'DOWN') {
               shape = 'triangle-down';
             } else {
               shape = 'square';
@@ -139,19 +135,41 @@ angular.module('dataManager', ['underscore'])
             return shape;
           };
 
-          var columns = rawData.columns;
-          _.each(rawData.values, function(element) {
-            pointValues.push({
-              x: xColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(element[columns.indexOf(xColName)]) : element[columns.indexOf(xColName)],
-              y: yColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(element[columns.indexOf(yColName)]) : element[columns.indexOf(yColName)],
-              shape: getShape(element[columns.indexOf('STOCK_TREND')]),
+
+          //push the input data
+          var inputValues = [];
+          var predictedIDList=_.pluck(rawData.predicted.values,0);
+          _.each(rawData.input.values, function(row) {
+            // avoid repeat data that appears in predicted values
+            var inputID=row[columns.indexOf('ID')];
+            if (!_.contains(predictedIDList,inputID)) {
+              inputValues.push({
+                x: xColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(row[columns.indexOf(xColName)]) : row[columns.indexOf(xColName)],
+                y: yColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(row[columns.indexOf(yColName)]) : row[columns.indexOf(yColName)],
+                shape: 'circle',
+                size: 100
+              });
+            }
+          });
+          //push the predicted data
+          var predictedValues = [];
+          _.each(rawData.predicted.values, function(row) {
+            predictedValues.push({
+              x: xColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(row[columns.indexOf(xColName)]) : row[columns.indexOf(xColName)],
+              y: yColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(row[columns.indexOf(yColName)]) : row[columns.indexOf(yColName)],
+              shape: getShape(row[columns.indexOf('STOCK_TREND')]),
               size: 100
             });
           });
-          finalData = [{
-            key: keyName,
-            color: pointColor,
-            values: pointValues
+          //assemble the final data
+          var finalData = [{
+            key: 'Training set',
+            color: '#00D0FF',
+            values: inputValues
+          }, {
+            key: 'Predicted',
+            color: '#FF2F00',
+            values: predictedValues
           }];
           $log.log(finalData);
           return finalData;

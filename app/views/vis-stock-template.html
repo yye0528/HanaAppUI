@@ -1,12 +1,4 @@
 <div id="scattercontainer" ng-controller='stockCtrl'>
-    <div id="axispicker">
-        <label class="pull-left control-label">X axis:</label>
-        <div dropdown-select="attrOptions" dropdown-model="attrForX" dropdown-item-label="attrName" dropdown-onchange="axisChange('x')" class="pull-left ">
-        </div>
-        <label class="pull-left control-label">Y axis:</label>
-        <div dropdown-select="attrOptions" dropdown-model="attrForY" dropdown-item-label="attrName" dropdown-onchange="axisChange('y')" class="pull-left ">
-        </div>
-    </div>
 
     <div class="alert alert-info" ng-show="showPlaceholder">Loading data...</div>
     <div class="alert alert-warning" ng-show="showError">Data loading error</div>

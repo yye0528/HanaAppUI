@@ -453,6 +453,7 @@ function configureLegend(chart, scope, attrs){
             chart.xAxis.tickPadding(scope.xaxistickpadding());
         }
         if(attrs.xaxistickformat){
+            // $log.log(attrs.xaxistickformat);
             chart.xAxis.tickFormat(scope.xaxistickformat());
         }
         if(scope.xaxislabel){
@@ -737,7 +738,6 @@ function initializeMargin(scope, attrs){
 
     function checkElementID(scope, attrs, element, chart, data) {
         'use strict';
-        console.log('elementID checked');
         var dataAttributeChartID; //randomly generated if id attribute doesn't exist
         if(!attrs.id){
             dataAttributeChartID = "chartid" + Math.floor(Math.random()*1000000001);
@@ -2046,12 +2046,12 @@ function initializeMargin(scope, attrs){
                                 configureXaxis(scope.chart, scope, attrs);
                                 configureYaxis(scope.chart, scope, attrs);
                                 configureLegend(scope.chart, scope, attrs);
-                                
                                 return scope.d3Call(data, scope.chart);
                             }
                             nv.addGraph({
+
                                 generate: function(){
-                                    $log.log('paint!');
+                                    
                                     initializeMargin(scope, attrs);
                                     var chart = nv.models.scatterChart()
                                         .width(scope.width)
@@ -2065,8 +2065,8 @@ function initializeMargin(scope, attrs){
                                         .forceSize(attrs.forcesize === undefined ? [] : scope.$eval(attrs.forcesize))
                                         .interactive(attrs.interactive === undefined ? false : (attrs.interactive === "true"))
                                         .tooltips(attrs.tooltips === undefined ? false : (attrs.tooltips  === "true"))
-                                        .tooltipContent(attrs.tooltipContent === undefined ? null : scope.tooltipContent())
-                                        .tooltipXContent(attrs.tooltipxcontent === undefined ? function(key, x) { return '<strong>' + x + '</strong>'; } : scope.tooltipYContent())
+                                        .tooltipContent(attrs.tooltipContent === undefined ? null  : scope.tooltipContent())
+                                        .tooltipXContent(attrs.tooltipxcontent === undefined ? function(key, x) { return '<strong>' + x + '</strong>'; } : scope.tooltipXContent())
                                         .tooltipYContent(attrs.tooltipycontent === undefined ? function(key, x, y) { return '<strong>' + y + '</strong>'; } : scope.tooltipYContent())
                                         .showControls(attrs.showcontrols === undefined ? false : (attrs.showcontrols === "true"))
                                         .showLegend(attrs.showlegend === undefined ? false : (attrs.showlegend === "true"))

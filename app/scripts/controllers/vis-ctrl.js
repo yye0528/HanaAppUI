@@ -10,11 +10,6 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
       contentUrl: '/views/tab-content-grid.html',
       active: true
     }, {
-      title: 'Scatter Plot',
-      imgUrl: '/images/icons/scatter_plot-25.png',
-      contentUrl: '/views/tab-content-scatter.html',
-      active: false
-    }, {
       title: 'Stock Trend',
       imgUrl: '/images/icons/scatter_plot-25.png',
       contentUrl: '/views/tab-content-stock-trend.html',
@@ -29,11 +24,11 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
     $scope.showError = false;
     //prepare the data
     var rawData = dataLoader.get({
-        data: 'testdata'
+        data: 'testdata.json'
       }, function(rawData) {
         //callback function from the query
 
-        $scope.columns = rawData.input.columns;
+        $scope.columns = dataTransformer.getNumericColomns(rawData.input.columns);
         $scope.attrOptions = [];
         $scope.attrForX = {
           attrName: 'Please select',
@@ -53,6 +48,7 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
         $scope.showPlaceholder = false;
       },
       function(reason) {
+        $scope.showPlaceholder = false;
         $scope.showError = true;
         $log.log('data loading failed. reason: ' + reason);
       });
@@ -86,27 +82,24 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
 
   }
 ])
-  .controller('stockCtrl', ['$scope', '$log', '_', 'dataLoader', 'dataStore', 'dataTransformer',
-    function($scope, $log, _, dataLoader, dataStore, dataTransformer) {
+  .controller('stockCtrl', ['$scope', '$log', '_', 'dataLoader', 'dataStore', 'dataTransformer', '$q',
+    function($scope, $log, _, dataLoader, dataStore, dataTransformer, $q) {
       $scope.showPlaceholder = true;
       $scope.showError = false;
 
-      //prepare the data
-      var rawData = dataLoader.get({
-          data: 'PAL.stock_1d'
-        }, function(rawData) {
-          //callback function from the query
-          $scope.columns = dataTransformer.getNumericColomns(rawData.columns, rawData.values);
-          $scope.attrOptions = [];
-          $scope.attrForX = {
-            attrName: 'Please select',
-            value: false
-          };
-          $scope.attrForY = {
-            attrName: 'Please select',
-            value: false
-          };
 
+      //prepare the data
+      var rawData={};
+      $q.all([dataLoader.get({
+        data: 'input.json'
+      }).$promise, dataLoader.get({
+        data: 'predicted_1d.json'
+      }).$promise]).then(function(result) {
+          //callback function from the query
+          rawData.input = result[0];
+          rawData.predicted = result[1];
+          $scope.columns = dataTransformer.getNumericColomns(rawData.input.columns, rawData.input.values);
+          $scope.attrOptions = [];
           _.each($scope.columns, function(element) {
             $scope.attrOptions.push({
               attrName: element,
@@ -117,13 +110,22 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
             attrName: 'DATE',
             value: 'DATE'
           });
-          //render a defaul chart before selecting axis
-          // $scope.data = dataTransformer.DTToStockPredition(rawData, 'DATE', 'STOCK_CLOSE_PRICE', 'predicted');
+
+          $scope.attrForX = {
+            attrName: 'DATE',
+            value: 'DATE'
+          };
+          $scope.attrForY = {
+            attrName: 'STOCK_CLOSE_PRICE',
+            value: 'STOCK_CLOSE_PRICE'
+          };
+          $scope.axisChange();
 
           $scope.showPlaceholder = false;
         },
         function(reason) {
           //data loading failed
+          $scope.showPlaceholder = false;
           $scope.showError = true;
           $log.log('data loading failed. reason: ' + reason);
         });
@@ -132,7 +134,8 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
       $scope.axisChange = function() {
         if ($scope.attrForX.value && $scope.attrForY.value) {
           // $scope.chart=null;
-          $scope.data = dataTransformer.DTToStockPredition(rawData, $scope.attrForX.value, $scope.attrForY.value, 'input');
+          // var inputData = dataTransformer.DTToStockPredition($scope.inputData, $scope.attrForX.value, $scope.attrForY.value, 'input');
+          $scope.data = dataTransformer.DTToStockPredition(rawData, $scope.attrForX.value, $scope.attrForY.value);
         }
       };
 
@@ -184,7 +187,7 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
 
       var columns = [];
       dataLoader.get({
-          data: 'testdata'
+          data: 'testdata.json'
         }, function(rawData) {
           $scope.columns = rawData.input.columns;
           _.each($scope.columns, function(element) {
@@ -204,6 +207,7 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
           $scope.showPlaceholder = false;
         },
         function(reason) {
+          $scope.showPlaceholder = false;
           $scope.showError = true;
           $log.log('data loading failed. reason: ' + reason);
         }); //rawData callback
@@ -228,7 +232,7 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
 
       var columns = [];
       dataLoader.get({
-          data: 'PAL.stock_1d'
+          data: 'PAL.stock_1d.json'
         }, function(rawData) {
           $scope.columns = rawData.columns;
           _.each($scope.columns, function(element) {
@@ -248,6 +252,7 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
           $scope.showPlaceholder = false;
         },
         function(reason) {
+          $scope.showPlaceholder = false;
           $scope.showError = true;
           $log.log('data loading failed. reason: ' + reason);
         }); //rawData callback
