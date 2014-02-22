@@ -1,7 +1,10 @@
 <div id="scattercontainer" ng-controller='stockCtrl'>
 
+
     <div class="alert alert-info" ng-show="showPlaceholder">Loading data...</div>
     <div class="alert alert-warning" ng-show="showError">Data loading error</div>
+
+    <div class="alert alert-info" style="width:1000px">The predicted stock trends (up and down) are denoted by up-pointing triangles and down-pointing triangles. The prediction model was built by calling Decision Tree C4.5 algorithm in SAP Hana PAL. Independent vairables used in this model are STOCK_CHANGE DOUBLE, DOCUMENT_TOTAL_COUNT INTEGER, SENTIMENT_TOTAL_COUNT INTEGER, POSITIVE_PERCENT DOUBLE, NEUTRAL_PERCENT DOUBLE, NEGATIVE_PERCENT DOUBLE, CALENDAR_EVENT_COUNT INTEGER, and STOCK_TREND.<br><br> <strong>NOTE: the stock close price presented by the Y locations in this plot are NOT a result of prediction</strong></div>
 
     <nvd3-scatter-chart data="data" id="exampleId" width="1000" height="400" margin="{left:100,top:100,bottom:100,right:100}" tooltips="true" interactive="true" showDistX="true" showDistY="true" showLegend="true" xaxistickformat="xAxistickformatFunction()" yaxistickformat="yAxistickformatFunction()" tooltipContent="tooltipContentFunction()" xaxislabel="attrForX.value" yaxislabel="attrForY.value" shape="getShape()" callback="callbackFunction()">
         <svg></svg>

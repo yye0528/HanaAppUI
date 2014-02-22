@@ -11,7 +11,7 @@
     <div class="alert alert-info" ng-show="showPlaceholder">Loading data...</div>
     <div class="alert alert-warning" ng-show="showError">Data loading error</div>
 
-    <nvd3-scatter-chart data="data" id="exampleId" width="1000" height="400" shape="getShape()" margin="{left:100,top:100,bottom:100,right:100}" tooltips="true" interactive="true" showDistX="true" showDistY="true" showLegend="true" xaxistickformat="axistickformatFunction()" yaxistickformat="axistickformatFunction()" xaxislabel="attrForX.value" yaxislabel="attrForY.value" callback="callbackFunction()">
+    <nvd3-scatter-chart data="data" id="exampleId" width="1000" height="400" margin="{left:100,top:100,bottom:100,right:100}" tooltips="true" interactive="true" showDistX="true" showDistY="true" showLegend="true" xaxistickformat="xAxistickformatFunction()" yaxistickformat="yAxistickformatFunction()" tooltipContent="tooltipContentFunction()" xaxislabel="attrForX.value" yaxislabel="attrForY.value" shape="getShape()" callback="callbackFunction()">
         <svg></svg>
 
     </nvd3-scatter-chart>

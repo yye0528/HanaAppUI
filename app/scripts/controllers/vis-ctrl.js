@@ -10,7 +10,12 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
       contentUrl: '/views/tab-content-grid.html',
       active: true
     }, {
-      title: 'Stock Trend',
+      title: 'Scatter Plot',
+      imgUrl: '/images/icons/scatter_plot-25.png',
+      contentUrl: '/views/tab-content-scatter.html',
+      active: false
+    }, {
+      title: 'Trend Prediction',
       imgUrl: '/images/icons/scatter_plot-25.png',
       contentUrl: '/views/tab-content-stock-trend.html',
       active: false
@@ -18,36 +23,49 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
   }
 ])
 
-.controller('scatterCtrl', ['$scope', '$log', '_', 'dataLoader', 'dataStore', 'dataTransformer',
-  function($scope, $log, _, dataLoader, dataStore, dataTransformer) {
+.controller('scatterCtrl', ['$scope', '$log', '_', 'dataLoader', 'dataStore', 'dataTransformer', '$q',
+  function($scope, $log, _, dataLoader, dataStore, dataTransformer, $q) {
     $scope.showPlaceholder = true;
     $scope.showError = false;
+
+
     //prepare the data
-    var rawData = dataLoader.get({
-        data: 'testdata.json'
-      }, function(rawData) {
+    var rawData = {};
+    $q.all([dataLoader.get({
+      data: 'input.json'
+    }).$promise, dataLoader.get({
+      data: 'predicted_1d.json'
+    }).$promise]).then(function(result) {
         //callback function from the query
-
-        $scope.columns = dataTransformer.getNumericColomns(rawData.input.columns);
+        rawData.input = result[0];
+        rawData.predicted = result[1];
+        $scope.columns = dataTransformer.getNumericColomns(rawData.input.columns, rawData.input.values);
         $scope.attrOptions = [];
-        $scope.attrForX = {
-          attrName: 'Please select',
-          value: false
-        };
-        $scope.attrForY = {
-          attrName: 'Please select',
-          value: false
-        };
-
         _.each($scope.columns, function(element) {
           $scope.attrOptions.push({
             attrName: element,
             value: element
           });
         });
+        $scope.attrOptions.push({
+          attrName: 'DATE',
+          value: 'DATE'
+        });
+
+        $scope.attrForX = {
+          attrName: 'DATE',
+          value: 'DATE'
+        };
+        $scope.attrForY = {
+          attrName: 'STOCK_CLOSE_PRICE',
+          value: 'STOCK_CLOSE_PRICE'
+        };
+        $scope.axisChange();
+
         $scope.showPlaceholder = false;
       },
       function(reason) {
+        //data loading failed
         $scope.showPlaceholder = false;
         $scope.showError = true;
         $log.log('data loading failed. reason: ' + reason);
@@ -57,7 +75,17 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
     $scope.axisChange = function() {
       if ($scope.attrForX.value && $scope.attrForY.value) {
         // $scope.chart=null;
-        $scope.data = dataTransformer.LRTonvd3Scatter(rawData, $scope.attrForX.value, $scope.attrForY.value, '');
+        // var inputData = dataTransformer.DTToStockPredition($scope.inputData, $scope.attrForX.value, $scope.attrForY.value, 'input');
+        var data = dataTransformer.DTToStockPredition(rawData, $scope.attrForX.value, $scope.attrForY.value);
+
+        // move all data from predicted set to input set, then delete predicted set
+        data[0].key='Input data';
+        _.each(data[1].values,function(d){
+          d.shape='circle';
+          data[0].values.push(d);
+        });
+        data.splice(1, 1);
+        $scope.data = data;
       }
     };
 
@@ -69,16 +97,25 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
     };
 
     //configure the chart
-    $scope.axistickformatFunction = function() {
-      return d3.format('.1f');
-    };
-
-    $scope.callbackFunction = function() {
-      return function(chart) {
-        $scope.chart = chart;
+    $scope.xAxistickformatFunction = function() {
+      var dateFormatter = function(d) {
+        return d3.time.format('%m/%d/%Y')(new Date(d));
       };
+      var numFormatter = d3.format('.1f');
+
+      var formatter = $scope.attrForX.value === 'DATE' ? dateFormatter : numFormatter;
+      return formatter;
     };
 
+    $scope.yAxistickformatFunction = function() {
+      var dateFormatter = function(d) {
+        return d3.time.format('%m/%d/%Y')(new Date(d));
+      };
+      var numFormatter = d3.format('.1f');
+
+      var formatter = $scope.attrForY.value === 'DATE' ? dateFormatter : numFormatter;
+      return formatter;
+    };
 
   }
 ])
@@ -89,7 +126,7 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
 
 
       //prepare the data
-      var rawData={};
+      var rawData = {};
       $q.all([dataLoader.get({
         data: 'input.json'
       }).$promise, dataLoader.get({
