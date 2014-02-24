@@ -8,10 +8,17 @@ angular.module('visDirectives', [])
       scope: true
     };
   })
-  .directive('visStockTrend', function() {
+  .directive('visStockDT', function() {
     return {
       restrict: 'EA',
-      templateUrl: '/views/vis-stock-template.html',
+      templateUrl: '/views/vis-stock-dt-template.html',
+      scope: true
+    };
+  })
+  .directive('visStockRG', function() {
+    return {
+      restrict: 'EA',
+      templateUrl: '/views/vis-stock-rg-template.html',
       scope: true
     };
   })

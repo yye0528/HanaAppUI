@@ -117,17 +117,28 @@ angular.module('dataManager', ['underscore'])
 
         DTToStockPredition: function(rawData, xColName, yColName) {
           var columns = rawData.input.columns;
-          var getShape = function(trend) {
+          var getShape = function(id, trend) {
             //non-price values are displayed as circles
             if (yColName !== 'STOCK_CLOSE_PRICE') {
               return 'circle';
             }
 
             //only the predicted stock price are displayed depend on stock trend
+            var row1 = _.findWhere(rawData.input.values, {
+              0: id
+            });
+            var row2 = _.findWhere(rawData.predicted.values, {
+              0: id
+            });
+            //display diamond where the prediction is not accurate
+            if (row1[columns.indexOf('STOCK_TREND')] !== row2[columns.indexOf('STOCK_TREND')]) {
+              return 'diamond';
+            }
+
             var shape;
-            if (trend === 'UP') {
+            if (trend === 'UP' || trend === 1) {
               shape = 'triangle-up';
-            } else if (trend === 'DOWN') {
+            } else if (trend === 'DOWN' || trend === 0) {
               shape = 'triangle-down';
             } else {
               shape = 'square';
@@ -135,15 +146,33 @@ angular.module('dataManager', ['underscore'])
             return shape;
           };
 
+          /*          var getSize = function(id) {
+            //non-price values are displayed as circles
+            if (yColName !== 'STOCK_CLOSE_PRICE') {
+              return 100;
+            }
+            var size;
+            var row1=_.findWhere(rawData.input.values,{row[columns.indexOf('ID')]:id});
+            var row2=_.findWhere(rawData.predicted.values,{row[columns.indexOf('ID')]:id});
+            if (row1[columns.indexOf('STOCK_TREND')]==row2[columns.indexOf('STOCK_TREND')]) {
+              size = 110;
+            } else {
+              size = 100;
+            }
+            return size;
+          };*/
+
+
 
           //push the input data
           var inputValues = [];
-          var predictedIDList=_.pluck(rawData.predicted.values,0);
+          var predictedIDList = _.pluck(rawData.predicted.values, columns.indexOf(xColName));
           _.each(rawData.input.values, function(row) {
             // avoid repeat data that appears in predicted values
-            var inputID=row[columns.indexOf('ID')];
-            if (!_.contains(predictedIDList,inputID)) {
+            var inputID = row[columns.indexOf('ID')];
+            if (!_.contains(predictedIDList, inputID)) {
               inputValues.push({
+                //accomadate Date type
                 x: xColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(row[columns.indexOf(xColName)]) : row[columns.indexOf(xColName)],
                 y: yColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(row[columns.indexOf(yColName)]) : row[columns.indexOf(yColName)],
                 shape: 'circle',
@@ -157,7 +186,7 @@ angular.module('dataManager', ['underscore'])
             predictedValues.push({
               x: xColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(row[columns.indexOf(xColName)]) : row[columns.indexOf(xColName)],
               y: yColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(row[columns.indexOf(yColName)]) : row[columns.indexOf(yColName)],
-              shape: getShape(row[columns.indexOf('STOCK_TREND')]),
+              shape: getShape(row[columns.indexOf('ID')], row[columns.indexOf('STOCK_TREND')]),
               size: 100
             });
           });
@@ -175,8 +204,8 @@ angular.module('dataManager', ['underscore'])
           return finalData;
         },
 
-        DTToStockGrid: function(rawData, group, oldData) {
-          var finalData = _.isArray(oldData) ? oldData : [];
+        DTToStockGrid: function(rawData) {
+          var finalData = [];
           var columns = rawData.columns;
 
           // push the input part
@@ -185,7 +214,6 @@ angular.module('dataManager', ['underscore'])
             _.each(columns, function(attr, attrIndex) {
               rowObj[attr] = rowArray[attrIndex];
             });
-            rowObj.$group = group;
             finalData.push(rowObj);
           });
           return finalData;
@@ -200,9 +228,14 @@ angular.module('dataManager', ['underscore'])
             var rowObj = {};
             _.each(columns, function(attr, attrIndex) {
               rowObj[attr] = rowArray[attrIndex];
-            });
+            });                                                                                                                                                                                                                                                                                                         
             rowObj.$group = 'input';
             finalData.push(rowObj);
+          });
+          _.each(list, function(value, key, list){
+          
+            // body
+          
           });
 
           // push the predicted part

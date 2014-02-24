@@ -17,7 +17,7 @@ angular.module('webApp', [
   .config(function ($routeProvider) {
     $routeProvider
       .when("/", {
-        templateUrl: '/views/vis-select-tabs.html'
+        templateUrl: '/views/tabs.html'
       })
       .otherwise({
         redirectTo: '/'
