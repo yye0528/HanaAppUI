@@ -166,15 +166,15 @@ angular.module('dataManager', ['underscore'])
 
           //push the input data
           var inputValues = [];
-          var predictedIDList = _.pluck(rawData.predicted.values, columns.indexOf(xColName));
+          var predictedIDList = _.pluck(rawData.predicted.values, columns.indexOf('ID'));
           _.each(rawData.input.values, function(row) {
             // avoid repeat data that appears in predicted values
             var inputID = row[columns.indexOf('ID')];
             if (!_.contains(predictedIDList, inputID)) {
               inputValues.push({
                 //accomadate Date type
-                x: xColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(row[columns.indexOf(xColName)]) : row[columns.indexOf(xColName)],
-                y: yColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(row[columns.indexOf(yColName)]) : row[columns.indexOf(yColName)],
+                x: xColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(row[columns.indexOf(xColName)]) : row[columns.indexOf(xColName)]+ Math.random() * 0.00000001,
+                y: yColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(row[columns.indexOf(yColName)]) : row[columns.indexOf(yColName)]+ Math.random() * 0.00000001,
                 shape: 'circle',
                 size: 100
               });
@@ -184,8 +184,8 @@ angular.module('dataManager', ['underscore'])
           var predictedValues = [];
           _.each(rawData.predicted.values, function(row) {
             predictedValues.push({
-              x: xColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(row[columns.indexOf(xColName)]) : row[columns.indexOf(xColName)],
-              y: yColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(row[columns.indexOf(yColName)]) : row[columns.indexOf(yColName)],
+              x: xColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(row[columns.indexOf(xColName)]) : row[columns.indexOf(xColName)]+ Math.random() * 0.00000001,
+              y: yColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(row[columns.indexOf(yColName)]) : row[columns.indexOf(yColName)]+ Math.random() * 0.00000001,
               shape: getShape(row[columns.indexOf('ID')], row[columns.indexOf('STOCK_TREND')]),
               size: 100
             });

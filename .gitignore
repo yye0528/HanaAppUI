@@ -2,3 +2,4 @@ node_modules
 .tmp
 .TODO
 .sass-cache
+dist

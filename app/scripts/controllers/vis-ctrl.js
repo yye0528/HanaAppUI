@@ -90,6 +90,7 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
           data[0].values.push(d);
         });
         data.splice(1, 1);
+       // $log.log(data);
         $scope.data = data;
       }
     };
