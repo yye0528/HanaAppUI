@@ -2,4 +2,3 @@ node_modules
 .tmp
 .TODO
 .sass-cache
-app/bower_components
