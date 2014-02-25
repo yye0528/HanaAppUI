@@ -32,6 +32,7 @@ angular.module('visDirectives', [])
   .directive('shapeLegend', function() {
     return {
       restrict: 'E',
+      scope:{},
       template: '<div class="shape-legend-container"></div>',
       link: function() {
         var legendData = [{

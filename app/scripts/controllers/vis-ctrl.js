@@ -32,7 +32,9 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
   function($scope, $log, _, dataLoader, dataStore, dataTransformer, $q) {
     $scope.showPlaceholder = true;
     $scope.showError = false;
-
+    $scope.$watch(function(){return (!$scope.showPlaceholder && !$scope.showError);},function(value){
+      $scope.showContent=value;
+    });
 
     //prepare the data
     var rawData = {};
@@ -90,7 +92,7 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
           data[0].values.push(d);
         });
         data.splice(1, 1);
-       // $log.log(data);
+        // $log.log(data);
         $scope.data = data;
       }
     };
@@ -129,7 +131,6 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
     function($scope, $log, _, dataLoader, dataStore, dataTransformer, $q) {
       $scope.showPlaceholder = true;
       $scope.showError = false;
-
 
       //prepare the data
       var rawData = {};
@@ -217,7 +218,6 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
   function($scope, $log, _, dataLoader, dataStore, dataTransformer, $q) {
     $scope.showPlaceholder = true;
     $scope.showError = false;
-
 
     //prepare the data
     var rawData = {};
