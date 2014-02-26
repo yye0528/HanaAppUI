@@ -266,7 +266,7 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
     //update chart data when user change the selection
     $scope.axisChange = function() {
       if ($scope.attrForX.value && $scope.attrForY.value) {
-        var data=dataTransformer.DTToStockPredition(rawData, $scope.attrForX.value, $scope.attrForY.value);
+        var data = dataTransformer.DTToStockPredition(rawData, $scope.attrForX.value, $scope.attrForY.value);
         // only show the predicted data
         // $log.log(data);
         $scope.data = [data[1]];
@@ -360,7 +360,7 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
         data: 'gridData',
         // showGroupPanel: true,         ---> buggy in ng-grid 2.0.7, will be fixed in 2.0.8
         enableColumnResize: true,
-        headerRowHeight:80,
+        headerRowHeight: 60,
         columnDefs: 'columnDefs'
       };
 
@@ -369,9 +369,28 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
           data: 'input.json'
         }, function(rawData) {
           $scope.columns = rawData.columns;
-          _.each($scope.columns, function(element) {
+          var colWidths = [
+            50,
+            73,
+            61,
+            66,
+            63,
+            84,
+            84,
+            72,
+            70,
+            74,
+            75,
+            78,
+            76,
+            81,
+            55
+
+          ];
+          _.each($scope.columns, function(element,index) {
             var column = {
-              field: element
+              field: element,
+              width:colWidths[index]
             };
             columns.push(column);
           });
