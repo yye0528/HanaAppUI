@@ -66,9 +66,16 @@ body {
 }
 
 .gridStyle {
-    border: 1px solid rgb(212,212,212);
+    border: 1px solid #999;
     width: 1080px; 
     height: 500px;
+}
+.ngHeaderText {
+    font-size: 13px;
+    -ms-word-wrap: break-word;
+    word-wrap: break-word;
+    white-space: normal;
+    text-align: center;
 }
 
 /* Customize container */

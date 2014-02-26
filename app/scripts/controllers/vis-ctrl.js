@@ -360,6 +360,7 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
         data: 'gridData',
         // showGroupPanel: true,         ---> buggy in ng-grid 2.0.7, will be fixed in 2.0.8
         enableColumnResize: true,
+        headerRowHeight:80,
         columnDefs: 'columnDefs'
       };
 
