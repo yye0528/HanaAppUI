@@ -59,7 +59,6 @@ angular.module('visDirectives', [])
         scope.legend = d3.selectAll('.shape-legend-container').append('svg')
           .attr('width',580)
           .attr('height',80);
-          $log.log(angular.element('.shape-legend-container'));
         scope.legend.selectAll('path')
           .data(scope.legendData)
           .enter().append('path')

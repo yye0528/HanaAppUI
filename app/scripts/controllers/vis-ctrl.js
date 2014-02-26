@@ -5,12 +5,12 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
 .controller('tabsCtrl', ['$scope', '$log',
   function($scope) {
     $scope.tabs = [{
-      title: 'Table View',
+      title: 'Input data',
       imgUrl: '/images/icons/grid-26.png',
       contentUrl: '/views/tab-content-grid.html',
       active: true
     }, {
-      title: 'Scatter Plot',
+      title: 'Overview',
       imgUrl: '/images/icons/scatter_plot-25.png',
       contentUrl: '/views/tab-content-scatter.html',
       active: false
@@ -32,8 +32,10 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
   function($scope, $log, _, dataLoader, dataStore, dataTransformer, $q) {
     $scope.showPlaceholder = true;
     $scope.showError = false;
-    $scope.$watch(function(){return (!$scope.showPlaceholder && !$scope.showError);},function(value){
-      $scope.showContent=value;
+    $scope.$watch(function() {
+      return (!$scope.showPlaceholder && !$scope.showError);
+    }, function(value) {
+      $scope.showContent = value;
     });
 
     //prepare the data
@@ -264,9 +266,10 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
     //update chart data when user change the selection
     $scope.axisChange = function() {
       if ($scope.attrForX.value && $scope.attrForY.value) {
-        // $scope.chart=null;
-        // var inputData = dataTransformer.DTToStockPredition($scope.inputData, $scope.attrForX.value, $scope.attrForY.value, 'input');
-        $scope.data = dataTransformer.DTToStockPredition(rawData, $scope.attrForX.value, $scope.attrForY.value);
+        var data=dataTransformer.DTToStockPredition(rawData, $scope.attrForX.value, $scope.attrForY.value);
+        // only show the predicted data
+        // $log.log(data);
+        $scope.data = [data[1]];
       }
     };
 
