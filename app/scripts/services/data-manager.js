@@ -200,7 +200,6 @@ angular.module('dataManager', ['underscore'])
             color: '#FF2F00',
             values: predictedValues
           }];
-          $log.log(finalData);
           return finalData;
         },
 

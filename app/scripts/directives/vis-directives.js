@@ -29,13 +29,13 @@ angular.module('visDirectives', [])
       scope: true
     };
   })
-  .directive('shapeLegend', function() {
+  .directive('shapeLegend', ['$log',function($log) {
     return {
       restrict: 'E',
       scope:{},
       template: '<div class="shape-legend-container"></div>',
-      link: function() {
-        var legendData = [{
+      link: function(scope,element,attr) {
+        scope.legendData = [{
           x: 10,
           y: 5,
           shape: 'triangle-up',
@@ -56,12 +56,12 @@ angular.module('visDirectives', [])
           shape: 'diamond',
           text: 'Incorrect prediction'
         }];
-        var legend = d3.select('.shape-legend-container').append('svg:svg')
-          .attr('width',1200)
+        scope.legend = d3.selectAll('.shape-legend-container').append('svg')
+          .attr('width',580)
           .attr('height',80);
-
-        legend.selectAll('path')
-          .data(legendData)
+          $log.log(angular.element('.shape-legend-container'));
+        scope.legend.selectAll('path')
+          .data(scope.legendData)
           .enter().append('path')
           .style('fill', '#FF2F00')
           .style('stroke', '#FF2F00')
@@ -72,8 +72,8 @@ angular.module('visDirectives', [])
             return d.shape;
           }));
 
-        legend.selectAll('text')
-          .data(legendData)
+        scope.legend.selectAll('text')
+          .data(scope.legendData)
           .enter().append('text')
           .attr('transform', function(d) {
             return 'translate(' + (d.x + 20) + ',' + (d.y + 5) + ')';
@@ -85,4 +85,4 @@ angular.module('visDirectives', [])
 
       }
     };
-  });
+  }]);
