@@ -85,16 +85,7 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
       if ($scope.attrForX.value && $scope.attrForY.value) {
         // $scope.chart=null;
         // var inputData = dataTransformer.DTToStockPredition($scope.inputData, $scope.attrForX.value, $scope.attrForY.value, 'input');
-        var data = dataTransformer.DTToStockPredition(rawData, $scope.attrForX.value, $scope.attrForY.value);
-
-        // move all data from predicted set to input set, then delete predicted set
-        data[0].key = 'Input data';
-        _.each(data[1].values, function(d) {
-          d.shape = 'circle';
-          data[0].values.push(d);
-        });
-        data.splice(1, 1);
-        // $log.log(data);
+        var data = dataTransformer.stockTonvd3Scatter(rawData, $scope.attrForX.value, $scope.attrForY.value);
         $scope.data = data;
       }
     };
@@ -266,10 +257,11 @@ angular.module('controllers', ['dataManager', 'underscore', 'ngDropdowns'])
     //update chart data when user change the selection
     $scope.axisChange = function() {
       if ($scope.attrForX.value && $scope.attrForY.value) {
-        var data = dataTransformer.DTToStockPredition(rawData, $scope.attrForX.value, $scope.attrForY.value);
+        // var data = dataTransformer.DTToStockPredition(rawData, $scope.attrForX.value, $scope.attrForY.value);
+        var data = dataTransformer.RGToStockPredition(rawData);
         // only show the predicted data
         // $log.log(data);
-        $scope.data = [data[1]];
+        $scope.data = data;
       }
     };
 

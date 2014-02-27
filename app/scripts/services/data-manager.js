@@ -81,60 +81,41 @@ angular.module('dataManager', ['underscore'])
 
         },
 
-        LRTonvd3Scatter: function(rawData, xColName, yColName, sizeColName) {
+        stockTonvd3Scatter: function(rawData, xColName, yColName) {
           var columns = rawData.input.columns;
           //push the input data
-          //the random thing is a work-around to the problem that nvd3 don't accept duplicated (x,y) values
           var inputValues = [];
           _.each(rawData.input.values, function(row) {
             inputValues.push({
-              x: row[columns.indexOf(xColName)] + Math.random() * 0.00000001,
-              y: row[columns.indexOf(yColName)] + Math.random() * 0.00000001,
-              size: _.isEmpty(sizeColName) ? 100 : row[columns.indexOf(sizeColName)] + Math.random() * 0.00000001
+              x: xColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(row[columns.indexOf(xColName)]) : row[columns.indexOf(xColName)] + Math.random() * 0.00000001,
+              y: yColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(row[columns.indexOf(yColName)]) : row[columns.indexOf(yColName)] + Math.random() * 0.00000001,
+              shape: 'circle',
+              size: 100
             });
           });
-          //push the predicted data
-          var predictedValues = [];
-          _.each(rawData.predicted.values, function(row) {
-            predictedValues.push({
-              x: row[columns.indexOf(xColName)] + Math.random() * 0.00000001,
-              y: row[columns.indexOf(yColName)] + Math.random() * 0.00000001,
-              size: _.isEmpty(sizeColName) ? 100 : row[columns.indexOf(sizeColName)] + Math.random() * 0.00000001
-            });
-          });
-          //assemble the final data
+
           var finalData = [{
-            key: 'Predicted',
-            color: '#FF2F00',
-            values: predictedValues
-          }, {
-            key: 'Input',
-            color: '00D0FF',
+            key: 'Input data',
+            color: '#00D0FF',
             values: inputValues
           }];
           return finalData;
         },
 
-        DTToStockPredition: function(rawData, xColName, yColName) {
+        DTToStockPredition: function(rawData) {
           var columns = rawData.input.columns;
-          var getShape = function(id, trend) {
-            //non-price values are displayed as circles
-            if (yColName !== 'STOCK_CLOSE_PRICE') {
-              return 'circle';
-            }
-
-            //only the predicted stock price are displayed depend on stock trend
+          var isCorrect = function(id) {
             var row1 = _.findWhere(rawData.input.values, {
               0: id
             });
             var row2 = _.findWhere(rawData.predicted.values, {
               0: id
             });
-            //display diamond where the prediction is not accurate
-            if (row1[columns.indexOf('STOCK_TREND')] !== row2[columns.indexOf('STOCK_TREND')]) {
-              return 'diamond';
-            }
+            return row1[columns.indexOf('STOCK_TREND')] === row2[columns.indexOf('STOCK_TREND')];
+          };
 
+          var getShape = function(trend) {
+            //display diamond where the prediction is not accurate
             var shape;
             if (trend === 'UP' || trend === 1) {
               shape = 'triangle-up';
@@ -146,59 +127,102 @@ angular.module('dataManager', ['underscore'])
             return shape;
           };
 
-          /*          var getSize = function(id) {
-            //non-price values are displayed as circles
-            if (yColName !== 'STOCK_CLOSE_PRICE') {
-              return 100;
-            }
-            var size;
-            var row1=_.findWhere(rawData.input.values,{row[columns.indexOf('ID')]:id});
-            var row2=_.findWhere(rawData.predicted.values,{row[columns.indexOf('ID')]:id});
-            if (row1[columns.indexOf('STOCK_TREND')]==row2[columns.indexOf('STOCK_TREND')]) {
-              size = 110;
-            } else {
-              size = 100;
-            }
-            return size;
-          };*/
 
-
-
-          //push the input data
-          var inputValues = [];
-          var predictedIDList = _.pluck(rawData.predicted.values, columns.indexOf('ID'));
-          _.each(rawData.input.values, function(row) {
+          //categorize the data
+          var inputValues=[];
+          var correctValues = [];
+          var incorrectValues = [];
+          _.each(rawData.predicted.values, function(row) {
             // avoid repeat data that appears in predicted values
-            var inputID = row[columns.indexOf('ID')];
-            if (!_.contains(predictedIDList, inputID)) {
-              inputValues.push({
-                //accomadate Date type
-                x: xColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(row[columns.indexOf(xColName)]) : row[columns.indexOf(xColName)]+ Math.random() * 0.00000001,
-                y: yColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(row[columns.indexOf(yColName)]) : row[columns.indexOf(yColName)]+ Math.random() * 0.00000001,
-                shape: 'circle',
+            var id = row[columns.indexOf('ID')];
+            var trend = row[columns.indexOf('STOCK_TREND')];
+            if (isCorrect(id)) {
+              correctValues.push({
+                x: d3.time.format('%m/%d/%Y').parse(row[columns.indexOf('DATE')]),
+                y: row[columns.indexOf('STOCK_CLOSE_PRICE')],
+                shape: getShape(trend),
+                size: 100
+              });
+            } else {
+              incorrectValues.push({
+                x: d3.time.format('%m/%d/%Y').parse(row[columns.indexOf('DATE')]),
+                y: row[columns.indexOf('STOCK_CLOSE_PRICE')],
+                shape: 'diamond',
                 size: 100
               });
             }
           });
-          //push the predicted data
-          var predictedValues = [];
-          _.each(rawData.predicted.values, function(row) {
-            predictedValues.push({
-              x: xColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(row[columns.indexOf(xColName)]) : row[columns.indexOf(xColName)]+ Math.random() * 0.00000001,
-              y: yColName === 'DATE' ? d3.time.format('%m/%d/%Y').parse(row[columns.indexOf(yColName)]) : row[columns.indexOf(yColName)]+ Math.random() * 0.00000001,
-              shape: getShape(row[columns.indexOf('ID')], row[columns.indexOf('STOCK_TREND')]),
-              size: 100
+          //assemble the final data
+          var finalData = [{
+            key: 'Corret Predictions',
+            color: '#00D0FF',
+            values: correctValues
+          }, {
+            key: 'incorrect Predicitons',
+            color: '#FF2F00',
+            values: incorrectValues
+          }];
+          return finalData;
+        },
+
+        RGToStockPredition: function(rawData) {
+          var columns = rawData.input.columns;
+          var isCorrect = function(id) {
+            var row1 = _.findWhere(rawData.input.values, {
+              0: id
             });
+            var row2 = _.findWhere(rawData.predicted.values, {
+              0: id
+            });
+            return row1[columns.indexOf('STOCK_TREND')] === row2[columns.indexOf('STOCK_TREND')];
+          };
+
+          var getShape = function(trend) {
+            //display diamond where the prediction is not accurate
+            var shape;
+            if (trend === 'UP' || trend === 1) {
+              shape = 'triangle-up';
+            } else if (trend === 'DOWN' || trend === 0) {
+              shape = 'triangle-down';
+            } else {
+              shape = 'square';
+            }
+            return shape;
+          };
+
+
+          //categorize the data
+          var correctValues = [];
+          var incorrectValues = [];
+          _.each(rawData.predicted.values, function(row) {
+            // avoid repeat data that appears in predicted values
+            var id = row[columns.indexOf('ID')];
+            var trend = row[columns.indexOf('STOCK_TREND')];
+            if (isCorrect(id)) {
+              correctValues.push({
+                x: d3.time.format('%m/%d/%Y').parse(row[columns.indexOf('DATE')]),
+                y: row[columns.indexOf('STOCK_CLOSE_PRICE')],
+                shape: getShape(trend),
+                size: 100
+              });
+            } else {
+              incorrectValues.push({
+                x: d3.time.format('%m/%d/%Y').parse(row[columns.indexOf('DATE')]),
+                y: row[columns.indexOf('STOCK_CLOSE_PRICE')],
+                shape: 'diamond',
+                size: 100
+              });
+            }
           });
           //assemble the final data
           var finalData = [{
-            key: 'Training set',
+            key: 'Corret Predictions',
             color: '#00D0FF',
-            values: inputValues
+            values: correctValues
           }, {
-            key: 'Predicted',
+            key: 'incorrect Predicitons',
             color: '#FF2F00',
-            values: predictedValues
+            values: incorrectValues
           }];
           return finalData;
         },
@@ -227,14 +251,14 @@ angular.module('dataManager', ['underscore'])
             var rowObj = {};
             _.each(columns, function(attr, attrIndex) {
               rowObj[attr] = rowArray[attrIndex];
-            });                                                                                                                                                                                                                                                                                                         
+            });
             rowObj.$group = 'input';
             finalData.push(rowObj);
           });
-          _.each(list, function(value, key, list){
-          
+          _.each(list, function(value, key, list) {
+
             // body
-          
+
           });
 
           // push the predicted part
