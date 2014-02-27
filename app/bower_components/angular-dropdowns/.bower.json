@@ -12,11 +12,11 @@
     "select"
   ],
   "license": "MIT",
-  "_release": "81cbebf271",
+  "_release": "8c252a584a",
   "_resolution": {
     "type": "branch",
     "branch": "master",
-    "commit": "81cbebf27143d2c21e4b3117a8e8662c520e8ff3"
+    "commit": "8c252a584acf573d76f62e799328a6a94a703cb1"
   },
   "_source": "git://github.com/jseppi/angular-dropdowns.git",
   "_target": "*",

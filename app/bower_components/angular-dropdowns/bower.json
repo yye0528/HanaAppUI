@@ -6,7 +6,7 @@
     "James Seppi"
   ],
   "description": "AngularJS Dropdown Directives",
-  "main": ["dist/angular-dropdowns.js","css/dropdowns.css"],
+  "main": "dist/angular-dropdowns.js",
   "keywords": [
     "angular",
     "dropdown",

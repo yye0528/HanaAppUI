@@ -96,7 +96,7 @@ angular.module('dataManager', ['underscore'])
 
           var finalData = [{
             key: 'Input data',
-            color: '#0066FF',
+            color: '#0099FF',
             values: inputValues
           }];
           return finalData;
@@ -138,11 +138,12 @@ angular.module('dataManager', ['underscore'])
             // avoid repeat data that appears in predicted values
             var inputID = row[columns.indexOf('ID')];
             if (!_.contains(predictedIDList, inputID)) {
+              var trend = row[columns.indexOf('STOCK_TREND')];
               inputValues.push({
                 //accomadate Date type
                 x: d3.time.format('%m/%d/%Y').parse(row[columns.indexOf('DATE')]),
                 y: row[columns.indexOf('STOCK_CLOSE_PRICE')],
-                shape: 'circle',
+                shape: getShape(trend),
                 size: 100
               });
             }
@@ -164,7 +165,7 @@ angular.module('dataManager', ['underscore'])
               incorrectValues.push({
                 x: d3.time.format('%m/%d/%Y').parse(row[columns.indexOf('DATE')]),
                 y: row[columns.indexOf('STOCK_CLOSE_PRICE')],
-                shape: 'diamond',
+                shape: getShape(trend),
                 size: 100
               });
             }
@@ -172,7 +173,7 @@ angular.module('dataManager', ['underscore'])
           //assemble the final data
           var finalData = [{
             key: 'Training set',
-            color: '#0066FF',
+            color: '#0099FF',
             values: inputValues
           }, {
             key: 'Corret Predictions',
@@ -230,7 +231,7 @@ angular.module('dataManager', ['underscore'])
               incorrectValues.push({
                 x: d3.time.format('%m/%d/%Y').parse(row[columns.indexOf('DATE')]),
                 y: row[columns.indexOf('STOCK_CLOSE_PRICE')],
-                shape: 'diamond',
+                shape: getShape(trend),
                 size: 100
               });
             }

@@ -39,40 +39,27 @@ angular.module('visDirectives', [])
           scope.legendData = [{
             x: 10,
             y: 5,
-            color: '#009900',
             shape: 'triangle-up',
-            text: 'Correct prediction: Price goes up'
+            text: 'Price goes up'
+          }, {
+            x: 160,
+            y: 5,
+            shape: 'triangle-down',
+            text: 'Price goes down'
           }, {
             x: 310,
             y: 5,
-            shape: 'triangle-down',
-            color: '#009900',
-            text: 'Correct prediction: Price goes down'
-          }, {
-            x: 10,
-            y: 25,
-            color: '#009900',
             shape: 'square',
-            text: 'Correct prediction: Price remains unchange'
-          }, {
-            x: 310,
-            y: 25,
-            color: '#FF0000',
-            shape: 'diamond',
-            text: 'Incorrect prediction'
+            text: 'Price remains unchanged'
           }];
           scope.legend = d3.selectAll('.shape-legend-container').append('svg')
-            .attr('width', 580)
-            .attr('height', 80);
+            .attr('width', 500)
+            .attr('height', 40);
           scope.legend.selectAll('path')
             .data(scope.legendData)
             .enter().append('path')
-            .style('fill', function(d) {
-              return d.color;
-            })
-            .style('stroke', function(d) {
-              return d.color;
-            })
+            .style('stroke', '#333')
+            .style('fill','#FFF')
             .attr('transform', function(d) {
               return 'translate(' + d.x + ',' + d.y + ')';
             })
