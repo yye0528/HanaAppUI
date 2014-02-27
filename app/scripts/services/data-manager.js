@@ -96,7 +96,7 @@ angular.module('dataManager', ['underscore'])
 
           var finalData = [{
             key: 'Input data',
-            color: '#00D0FF',
+            color: '#0066FF',
             values: inputValues
           }];
           return finalData;
@@ -129,9 +129,26 @@ angular.module('dataManager', ['underscore'])
 
 
           //categorize the data
-          var inputValues=[];
+          var inputValues = [];
           var correctValues = [];
           var incorrectValues = [];
+          //push the input data
+          var predictedIDList = _.pluck(rawData.predicted.values, columns.indexOf('ID'));
+          _.each(rawData.input.values, function(row) {
+            // avoid repeat data that appears in predicted values
+            var inputID = row[columns.indexOf('ID')];
+            if (!_.contains(predictedIDList, inputID)) {
+              inputValues.push({
+                //accomadate Date type
+                x: d3.time.format('%m/%d/%Y').parse(row[columns.indexOf('DATE')]),
+                y: row[columns.indexOf('STOCK_CLOSE_PRICE')],
+                shape: 'circle',
+                size: 100
+              });
+            }
+          });
+
+          // push the predicted data
           _.each(rawData.predicted.values, function(row) {
             // avoid repeat data that appears in predicted values
             var id = row[columns.indexOf('ID')];
@@ -154,12 +171,16 @@ angular.module('dataManager', ['underscore'])
           });
           //assemble the final data
           var finalData = [{
+            key: 'Training set',
+            color: '#0066FF',
+            values: inputValues
+          }, {
             key: 'Corret Predictions',
-            color: '#00D0FF',
+            color: '#009900',
             values: correctValues
           }, {
             key: 'incorrect Predicitons',
-            color: '#FF2F00',
+            color: '#FF0000',
             values: incorrectValues
           }];
           return finalData;
@@ -217,11 +238,11 @@ angular.module('dataManager', ['underscore'])
           //assemble the final data
           var finalData = [{
             key: 'Corret Predictions',
-            color: '#00D0FF',
+             color: '#009900',
             values: correctValues
           }, {
             key: 'incorrect Predicitons',
-            color: '#FF2F00',
+            color: '#FF0000',
             values: incorrectValues
           }];
           return finalData;
