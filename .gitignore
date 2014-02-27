@@ -2,5 +2,7 @@ node_modules
 .tmp
 .TODO
 .sass-cache
-.log
+*.log
 dist
+*.sh
+app/server.js
